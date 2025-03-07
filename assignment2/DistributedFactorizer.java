@@ -18,7 +18,7 @@ class DistributedFactorizer {
 
 		try {
 			DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-			output.writeUTF(option);
+			output.writeUTF(new Integer(option).toString());
 			output.writeUTF(num);
 
 			DataInputStream input = new DataInputStream(socket.getInputStream());
@@ -31,7 +31,7 @@ class DistributedFactorizer {
 			System.out.println(e);
 		}
 
-
+		return null;
 
 	}
 

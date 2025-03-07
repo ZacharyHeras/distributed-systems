@@ -23,10 +23,10 @@ class Server {
 
 			switch(option) {
 				case "0":
-					output.writeUTF(factor(bigInt.toString()));
+					output.writeUTF(factor(bigInt).toString());
 					break;
 				case "1":
-					if (factor(bigInt).length() > 2 ? output.writeUTF("Is not prime.") : output.writeUTF("Is prime."));
+					factor(bigInt).length() > 2 ? output.writeUTF("Is not prime.") : output.writeUTF("Is prime.");
 					break;
 				default:
 					break;
