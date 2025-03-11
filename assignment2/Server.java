@@ -5,18 +5,13 @@ import java.io.*;
 class Server {
 
 	public static void main(String[] args) {
-	
-		ServerSocket serverSocket = null;
-		Socket socket = null;
 
 		try {
-			serverSocket = new ServerSocket(10000);
-			socket = serverSocket.accept();
+			ServerSocket serverSocket = new ServerSocket(10000);
+			Socket socket = serverSocket.accept();
 
 			DataInputStream input = new DataInputStream(socket.getInputStream());
-
 			String option = input.readUTF();
-
 			BigInteger bigInt = new BigInteger(input.readUTF());
 
 			DataOutputStream output = new DataOutputStream(socket.getOutputStream());
