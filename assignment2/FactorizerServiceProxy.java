@@ -2,9 +2,14 @@ import java.io.*;
 import java.math.*;
 import java.net.*;
 
-class DistributedFactorizer {
+class FactorizerServiceProxy {
 
-	public static String factor(String num, int option) {
+    public FactorizerServiceProxy(String address, int port) {
+        this.address = address;
+        this.port = port;
+    }
+
+	public static String factor(String num) {
 
 		try {
 			Socket socket = new Socket("127.0.0.1", 10000);
