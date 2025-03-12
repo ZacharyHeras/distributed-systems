@@ -3,47 +3,44 @@ import java.math.*;
 import java.io.*;
 
 class Server {
-
 	public static void main(String[] args) {
+        FactorizerServiceImpl factorizerServiceImpl = new FactorizerServiceImpl();
 
-		try {
-			ServerSocket serverSocket = new ServerSocket(10000);
-			Socket socket = serverSocket.accept();
+        boolean again = true;
 
-			DataInputStream input = new DataInputStream(socket.getInputStream());
-			String option = input.readUTF();
-			BigInteger bigInt = new BigInteger(input.readUTF());
+        while (again) {
+            try {
+                ServerSocket serverSocket = new ServerSocket(10000);
+                Socket socket = serverSocket.accept();
 
-			DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+                DataInputStream input = new DataInputStream(socket.getInputStream());
+                String method = input.readUTF();
+                BigInteger bigInt = new BigInteger(input.readUTF());
 
-			switch(option) {
-				case "0":
-					output.writeUTF(factor(bigInt).toString());
-					break;
-				case "1":
-					factor(bigInt).length() > 2 ? output.writeUTF("Is not prime.") : output.writeUTF("Is prime.");
-					break;
-				default:
-					break;
+                DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 
-			}
+                if (method.equals("factor")) {
+                    BigInteger[] factors = factorizerServiceImpl.factor(bigInt);
+                    StringBuilder stringBuilder = new StringBuilder();
 
-			serverSocket.close();
-			socket.close();
+                    for (BigInteger factor : factors) {
+                        stringBuilder.append(factor.toString());
+                        stringBuilder.append(",");
+                    }
 
-		} catch (IOException e) {
-			System.out.println(e);
-		}
+                    output.writeUTF(stringBuilder.toString());
 
-	}
+                } else if (method.equals("isPrime")) {
+                    boolean isPrime = factorizerServiceImpl.isPrime(bigInt);
+                    output.writeUTF(String.valueOf(isPrime));
+                }
 
-	public static BigInteger[] factor(BigInteger bigInt) {
-		ArrayList<BigInteger> factors = new ArrayList<BigInteger>();
-		for(int i = 1; i < bigInt.intValue(); i++) {
-			if (bigInt.intValue() % i == 0)
-				factors.add(new BigInteger(i.toString())); }
+                serverSocket.close();
+                socket.close();
 
-		return factors.toArray();
-	}
-
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        }
+    }
 }

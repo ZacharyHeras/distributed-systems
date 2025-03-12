@@ -2,17 +2,16 @@ import java.io.*;
 import java.math.*;
 import java.net.*;
 
-class FactorizerServiceProxy {
+class FactorizerServiceProxy implements FactorizerService {
+    private static final String SERVER_ADDRESS = "127.0.0.1";
+    private static final int SERVER_PORT = 10000;
 
-    public FactorizerServiceProxy(String address, int port) {
-        this.address = address;
-        this.port = port;
-    }
-
-	public static String factor(String num) {
+	public BigInteger[] factor(BigInteger bigInt) {
+        Socket socket  = null;
+        BigInteger[] factors = null;
 
 		try {
-			Socket socket = new Socket("127.0.0.1", 10000);
+			socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
 		} catch (UnknownHostException e) {
 			System.out.println(e);
 		} catch (IOException e) {
@@ -21,20 +20,55 @@ class FactorizerServiceProxy {
 
 		try {
 			DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-			output.writeUTF(new Integer(option).toString());
-			output.writeUTF(num);
+			output.writeUTF("factor");
+			output.writeUTF(bigInt.toString());
 
 			DataInputStream input = new DataInputStream(socket.getInputStream());
-			socket.close();
 
-			return input.readUTF();
+            String serializedFactors = input.readUTF();
+
+            String[] factorsArray = serializedFactors.split(",");
+            factors = new BigInteger[factorsArray.length];
+
+            for (int i = 0; i < factorsArray.length; i++) {
+                factors[i] = new BigInteger(factorsArray[i]);
+            }
+
+            socket.close();
 			
 		} catch (IOException e) {
 			System.out.println(e);
 		}
 
-		return null;
-
+        return factors;
 	}
 
+	public boolean isPrime(BigInteger bigInt) {
+        Socket socket = null;
+        boolean isPrime = false;
+
+		try {
+			socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+		} catch (UnknownHostException e) {
+			System.out.println(e);
+		} catch (IOException e) {
+			System.out.println(e);	
+		}
+
+		try {
+			DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+			output.writeUTF("isPrime");
+			output.writeUTF(bigInt.toString());
+
+			DataInputStream input = new DataInputStream(socket.getInputStream());
+            isPrime = Boolean.parseBoolean(input.readUTF());
+            socket.close();
+
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+        
+        return isPrime;
+
+    }
 }
