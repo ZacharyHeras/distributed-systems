@@ -17,21 +17,19 @@ class Server {
                 String method = input.readUTF();
                 BigInteger bigInt = new BigInteger(input.readUTF());
 
-                DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+                ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 
-                if (method.equals("factor")) {
-                    BigInteger[] factors = factorizerServiceImpl.factor(bigInt);
-                    StringBuilder stringBuilder = new StringBuilder();
-
-                    for (BigInteger factor : factors) {
-                        stringBuilder.append(factor.toString());
-                        stringBuilder.append(",");
-                    }
-
+                if (method.equals("getIntArray")) {
+                    Integer[] factors = factorizerServiceImpl.getArray(bigInt);
                     output.writeUTF(stringBuilder.toString());
-
-                } else if (method.equals("isPrime")) {
-                    boolean isPrime = factorizerServiceImpl.isPrime(bigInt);
+                } else if (method.equals("getBigInteger")) {
+                    BigInteger bigInt = factorizerServiceImpl.getBigInteger(bigInt);
+                    output.writeUTF(String.valueOf(isPrime));
+                } else if (method.equals("factor")) {
+                    BigIntger[] factors = factorizerServiceImpl.factor(bigInt);
+                    output.writeUTF(String.valueOf(isPrime));
+                } else if (method.equals("factorArrayList")) {
+                    BigInteger[] factors = factorizerServiceImpl.factorArrayList(bigInt);
                     output.writeUTF(String.valueOf(isPrime));
                 }
 

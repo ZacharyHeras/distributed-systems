@@ -14,14 +14,25 @@ class Client {
             System.out.println("Select an option:");
 			System.out.println("1. Receive array.");
 			System.out.println("2. Receive big integer.");
-			System.out.println("3. Receive big integer array.");
-			System.out.println("4. Receive big integer list.");
+			System.out.println("3. Receive integer factors in array.");
+			System.out.println("4. Receive integer factors in ArrayList.");
 			System.out.println("5. Quit.");
 
 			int option = scanner.nextInt();
             scanner.nextLine();
 
 			if (option == 1) {
+				int[] factors = factorService.getArray();
+
+                for (int factor : factors) {
+                    System.out.println(factor);
+                }
+
+			} else if (option == 2) {
+				BigInteger bigInt = factorService.getBigInteger(bigInt);
+                System.out.println(bigInt);
+
+			} else if (option == 3) {
                 System.out.println("Enter integer: ");
                 String inputInt = scanner.nextLine();
 
@@ -33,17 +44,21 @@ class Client {
                     System.out.println(factor);
                 }
 
-			} else if (option == 2) {
+                System.out.println(bigInt);
+
+			} else if (option == 4) {
                 System.out.println("Enter integer: ");
                 String inputInt = scanner.nextLine();
 
                 BigInteger bigInt = new BigInteger(inputInt);
 
-				boolean isPrime = factorService.isPrime(bigInt);
+				ArrayList<BigInteger> factors = factorService.arrayListFactor(bigInt);
 
-                System.out.println(isPrime);
+                for (BigInteger factor : factors) {
+                    System.out.println(factor);
+                }
 
-			} else if (option == 3) {
+			} else if (option == 5) {
 				again = false;
             }
 		}
