@@ -1,9 +1,10 @@
 import java.net.*;
 import java.math.*;
 import java.io.*;
+import java.util.*;
 
 class Server {
-	public static void main(String[] args) {
+    public static void main(String[] args) {
         FactorizerServiceImpl factorizerServiceImpl = new FactorizerServiceImpl();
 
         boolean again = true;
@@ -11,34 +12,44 @@ class Server {
         while (again) {
             try {
                 ServerSocket serverSocket = new ServerSocket(10000);
+                System.out.println("hello");
                 Socket socket = serverSocket.accept();
+                System.out.println("here");
 
-                DataInputStream input = new DataInputStream(socket.getInputStream());
+                ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
                 String method = input.readUTF();
-                BigInteger bigInt = new BigInteger(input.readUTF());
+                
+                System.out.println(input);
 
                 ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 
                 if (method.equals("getIntArray")) {
-                    Integer[] factors = factorizerServiceImpl.getArray(bigInt);
-                    output.writeUTF(stringBuilder.toString());
+                    System.out.println("hello1");
+                    int[] factors = factorizerServiceImpl.getIntArray();
+                    System.out.println("hello2");
+                    output.writeObject(factors);
                 } else if (method.equals("getBigInteger")) {
-                    BigInteger bigInt = factorizerServiceImpl.getBigInteger(bigInt);
-                    output.writeUTF(String.valueOf(isPrime));
+                    BigInteger bigInt = factorizerServiceImpl.getBigInteger();
+                    output.writeObject(String.valueOf(bigInt));
                 } else if (method.equals("factor")) {
-                    BigIntger[] factors = factorizerServiceImpl.factor(bigInt);
-                    output.writeUTF(String.valueOf(isPrime));
+                    BigInteger bigInt = new BigInteger(input.readUTF());
+                    BigInteger[] factors = factorizerServiceImpl.factor(bigInt);
+                    output.writeObject(String.valueOf(factors));
                 } else if (method.equals("factorArrayList")) {
-                    BigInteger[] factors = factorizerServiceImpl.factorArrayList(bigInt);
-                    output.writeUTF(String.valueOf(isPrime));
+                    BigInteger bigInt = new BigInteger(input.readUTF());
+                    ArrayList<BigInteger> factors = factorizerServiceImpl.factorArrayList(bigInt);
+                    output.writeObject(String.valueOf(factors));
                 }
 
+                System.out.println("satoneuhsn");
+                    
                 serverSocket.close();
                 socket.close();
 
-            } catch (IOException e) {
-                System.out.println(e);
-            }
+                } catch (IOException e) {
+                    System.out.println(e);
+                    System.out.println("e activated");
+                }
         }
     }
 }
