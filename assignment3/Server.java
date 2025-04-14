@@ -12,29 +12,28 @@ class Server {
         while (again) {
             try {
                 ServerSocket serverSocket = new ServerSocket(10000);
-                System.out.println("hello");
                 Socket socket = serverSocket.accept();
-                System.out.println("here");
 
                 ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-                String method = input.readUTF();
-                
-                System.out.println(input);
-
+                String method = (String) input.readObject();
                 ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 
                 if (method.equals("getIntArray")) {
-                    System.out.println("hello1");
                     int[] factors = factorizerServiceImpl.getIntArray();
-                    System.out.println("hello2");
                     output.writeObject(factors);
                 } else if (method.equals("getBigInteger")) {
                     BigInteger bigInt = factorizerServiceImpl.getBigInteger();
-                    output.writeObject(String.valueOf(bigInt));
+                    output.writeObject(bigInt);
                 } else if (method.equals("factor")) {
-                    BigInteger bigInt = new BigInteger(input.readUTF());
+
+                    System.out.println("hello5");
+                    BigInteger bigInt = new BigInteger((String) input.readObject());
+                    System.out.println("hello6");
+                    System.out.println(String.valueOf(bigInt));
                     BigInteger[] factors = factorizerServiceImpl.factor(bigInt);
+                    System.out.println("hi5");
                     output.writeObject(String.valueOf(factors));
+
                 } else if (method.equals("factorArrayList")) {
                     BigInteger bigInt = new BigInteger(input.readUTF());
                     ArrayList<BigInteger> factors = factorizerServiceImpl.factorArrayList(bigInt);
@@ -49,6 +48,8 @@ class Server {
                 } catch (IOException e) {
                     System.out.println(e);
                     System.out.println("e activated");
+                } catch (ClassNotFoundException e) {
+                    System.out.println(e);
                 }
         }
     }

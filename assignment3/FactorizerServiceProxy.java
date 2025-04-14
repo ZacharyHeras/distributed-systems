@@ -14,6 +14,7 @@ class FactorizerServiceProxy implements FactorizerService {
         try {
             socket = new Socket();
             socket.connect(new InetSocketAddress(SERVER_ADDRESS, SERVER_PORT));
+            System.out.println("helllllllllllllo");
         } catch (UnknownHostException e) {
             System.out.println(e);
         } catch (IOException e) {
@@ -23,7 +24,7 @@ class FactorizerServiceProxy implements FactorizerService {
         try {
             ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
             System.out.println("hello3");
-            output.writeUTF("getIntArray");
+            output.writeObject("getIntArray");
             System.out.println("hello4");
 
             ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
@@ -62,14 +63,13 @@ class FactorizerServiceProxy implements FactorizerService {
 
         try {
             ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-            output.writeUTF("getBigInteger");
+            output.writeObject("getBigInteger");
 
             ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 
             Object object = input.readObject();
 
-            if (object instanceof BigInteger)
-                bigInteger = (BigInteger)object;
+            bigInteger = (BigInteger)object;
 
             socket.close();
 

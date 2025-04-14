@@ -13,9 +13,14 @@ public class FactorizerServiceImpl implements FactorizerService {
 
     public BigInteger[] factor(BigInteger bigInt) {
         ArrayList<BigInteger> factors = new ArrayList<BigInteger>();
+        for (int j = 1; j < 4000000; j++)
+            System.out.println("oh okay");
+
         for(int i = 1; i <= bigInt.intValue(); i++) {
             if (bigInt.intValue() % i == 0)
                 factors.add(new BigInteger(String.valueOf(i))); }
+
+        System.out.println("oh okay");
 
         return factors.toArray(new BigInteger[factors.size()-1]);
     }
