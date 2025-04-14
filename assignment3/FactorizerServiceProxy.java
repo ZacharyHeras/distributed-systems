@@ -3,80 +3,64 @@ import java.math.*;
 import java.net.*;
 import java.util.*;
 
-class FactorizerServiceProxy implements FactorizerService {
+@SuppressWarnings("unchecked")
+public class FactorizerServiceProxy implements FactorizerService {
     private static final String SERVER_ADDRESS = "127.0.0.1";
     private static final int SERVER_PORT = 10000;
+    private Socket socket;
+    private ObjectOutputStream output;
+    private ObjectInputStream input;
 
-    public int[] getIntArray() {
-        Socket socket  = null;
-        int[] array = null;
-
+    public FactorizerServiceProxy() {
         try {
             socket = new Socket();
             socket.connect(new InetSocketAddress(SERVER_ADDRESS, SERVER_PORT));
-            System.out.println("helllllllllllllo");
-        } catch (UnknownHostException e) {
-            System.out.println(e);
-        } catch (IOException e) {
+            this.output = new ObjectOutputStream(this.socket.getOutputStream());
+            this.input = new ObjectInputStream(this.socket.getInputStream());
+        } catch (Exception e) {
+            System.out.println("In FactorizerServiceProxy.java...");
             System.out.println(e);
         }
+    }
+
+    public int[] getIntArray() {
+        int[] intArray = null;
 
         try {
-            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-            System.out.println("hello3");
-            output.writeObject("getIntArray");
-            System.out.println("hello4");
+            this.output.writeObject("getIntArray");
+            this.output.flush();
 
-            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            // simulating contract
+            Integer intArraySize = (Integer) this.input.readObject();
 
-            Object object = input.readObject();
+            Object object = this.input.readObject();
+            intArray = (int[]) object;
 
-            System.out.println("hi");
+            // simulating contract
+            if (intArray.length != intArraySize) {
+                throw new IllegalStateException("State error.");
+            }
 
-            if (object instanceof int[])
-                array = (int[])object;
-
-            socket.close();
-
-        } catch (IOException e) {
-            System.out.println(e);
-
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
+            System.out.println("In FactorizerServiceProxy.java...");
             System.out.println(e);
         }
 
-            return array;
+        return intArray;
     }
 
     public BigInteger getBigInteger() {
-        Socket socket  = null;
         BigInteger bigInteger = null;
 
         try {
-            socket = new Socket();
-            socket.connect(new InetSocketAddress(SERVER_ADDRESS, SERVER_PORT), 10);
-        } catch (UnknownHostException e) {
-            System.out.println(e);
-        } catch (IOException e) {
-            System.out.println(e);
-        }
+            this.output.writeObject("getBigInteger");
+            this.output.flush();
 
-        try {
-            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-            output.writeObject("getBigInteger");
+            Object object = this.input.readObject();
+            bigInteger = (BigInteger) object;
 
-            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-
-            Object object = input.readObject();
-
-            bigInteger = (BigInteger)object;
-
-            socket.close();
-
-        } catch (IOException e) {
-            System.out.println(e);
-
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
+            System.out.println("In FactorizerServiceProxy.java...");
             System.out.println(e);
         }
 
@@ -84,78 +68,53 @@ class FactorizerServiceProxy implements FactorizerService {
     }
 
     public BigInteger[] factor(BigInteger bigInt) {
-        Socket socket  = null;
         BigInteger[] factors = null;
 
         try {
-            socket = new Socket();
-            socket.connect(new InetSocketAddress(SERVER_ADDRESS, SERVER_PORT), 10);
-        } catch (UnknownHostException e) {
-            System.out.println(e);
-        } catch (IOException e) {
-            System.out.println(e);
-        }
+            this.output.writeObject("factor");
+            this.output.flush();
+            this.output.writeObject(bigInt);
+            this.output.flush();
 
-        try {
-            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-            output.writeUTF("factor");
+            Object object = this.input.readObject();
+            factors = (BigInteger[]) object;
 
-            output.writeObject(bigInt);
-
-            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-
-            Object object = input.readObject();
-
-            if (object instanceof BigInteger[])
-                factors = (BigInteger[])object;
-
-            socket.close();
-
-        } catch (IOException e) {
-            System.out.println(e);
-
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
+            System.out.println("In FactorizerServiceProxy.java...");
             System.out.println(e);
         }
 
             return factors;
     }
 
-    @SuppressWarnings("unchecked")
     public ArrayList<BigInteger> factorArrayList(BigInteger bigInt) {
-        Socket socket  = null;
         ArrayList<BigInteger> factors = null;
 
         try {
-            socket = new Socket();
-            socket.connect(new InetSocketAddress(SERVER_ADDRESS, SERVER_PORT), 10);
-        } catch (UnknownHostException e) {
-            System.out.println(e);
-        } catch (IOException e) {
-            System.out.println(e);
-        }
+            this.output.writeObject("factorArrayList");
+            this.output.flush();
+            this.output.writeObject(bigInt);
+            this.output.flush();
 
-        try {
-            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-            output.writeUTF("factorArrayList");
+            Object object = this.input.readObject();
+            factors = (ArrayList<BigInteger>) object;
 
-            output.writeObject(bigInt);
-
-            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-
-            Object object = input.readObject();
-
-            factors = (ArrayList<BigInteger>)object;
-
-            socket.close();
-
-        } catch (IOException e) {
-            System.out.println(e);
-
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
+            System.out.println("In FactorizerServiceProxy.java...");
             System.out.println(e);
         }
 
             return factors;
+    }
+
+    public void close() {
+        try {
+            this.socket.close();
+            this.output.close();
+            this.input.close();
+        } catch (Exception e) {
+            System.out.println("In FactorizerServiceProxy.java...");
+            System.out.println(e);
+        }
     }
 }
