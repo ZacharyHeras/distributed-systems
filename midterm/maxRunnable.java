@@ -1,17 +1,18 @@
+
 import java.math.BigInteger;
 import java.util.*;
 
-public class SortRunnable implements Runnable {
+public class maxRunnable implements Runnable {
     private BigInteger[] bigIntArray;
     private BigInteger bigInt;
     
-    public SortRunnable(BigInteger[] bigIntArray, BigInteger bigInt) {
+    public maxRunnable(BigInteger[] bigIntArray, BigInteger bigInt) {
         this.bigIntArray = bigIntArray;
         this.bigInt = bigInt;
     }
 
     public void run() {
         bigInt = Arrays.stream(this.bigIntArray)
-                       .sorted();
+                       .reduce(this.bigIntArray[0], BigInteger::max);
     }
 }

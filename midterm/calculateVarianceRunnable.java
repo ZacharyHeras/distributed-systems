@@ -1,13 +1,10 @@
+
 import java.math.BigInteger;
 import java.util.*;
 
-public class SortRunnable implements Runnable {
-    private BigInteger[] bigIntArray;
-    private BigInteger bigInt;
-    
-    public SortRunnable(BigInteger[] bigIntArray, BigInteger bigInt) {
-        this.bigIntArray = bigIntArray;
-        this.bigInt = bigInt;
+public class SortRunnable extends ServerRunnable implements Runnable {
+    public SortRunnable(Socket socket) {
+        super(socket)
     }
 
     public void run() {
@@ -17,7 +14,7 @@ public class SortRunnable implements Runnable {
 
         bigInt = Arrays.stream(this.bigIntArray)
                        .map(i -> i.subtract(bigIntAverage))
-                       .map(i.pow(2))
+                       .map(i -> i.pow(2))
                        .reduce(BigInteger.ZERO, BigInteger::add)
                        .divide(BigInteger.valueOf(this.bigIntArray.length));
     }

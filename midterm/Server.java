@@ -1,4 +1,3 @@
-package midterm;
 
 import java.net.*;
 import java.math.*;
@@ -6,7 +5,7 @@ import java.io.*;
 import java.util.*;
 
 class Server {
-    private int num_threads = 12;
+    private static int num_threads = 12;
     private ServerSocket serverSocket;
     private Socket socket;
 
@@ -20,13 +19,13 @@ class Server {
     }
 
 	public static void main(String[] args) {
-        Executor exec = Executors.newFixedThreadPool();
+        Executor exec = Executors.newFixedThreadPool(num_threads);
         while (true) {
             exec.execute(request());
         }
     }
 
-    public ServerRunnable request() {
+    public static ServerRunnable request() {
         HashMap<String, Runnable> runnables = new HashMap<>();
         runnables.put("calculateAverage", new calculateAverageRunnable(socket));
         runnables.put("calculateVarianceRunnable", new calculateVarianceRunnable(socket));
