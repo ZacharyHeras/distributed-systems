@@ -1,46 +1,51 @@
+package midterm;
+
 import java.net.*;
 import java.math.*;
 import java.io.*;
+import java.util.*;
 
 class Server {
-	public static void main(String[] args) {
-        ServiceImpl factorizerServiceImpl = new ServiceImpl();
+    private int num_threads = 12;
+    private ServerSocket serverSocket;
+    private Socket socket;
 
-        boolean again = true;
-
-        while (again) {
-            try {
-                ServerSocket serverSocket = new ServerSocket(10000);
-                Socket socket = serverSocket.accept();
-
-                DataInputStream input = new DataInputStream(socket.getInputStream());
-                String method = input.readUTF();
-                BigInteger bigInt = new BigInteger(input.readUTF());
-
-                DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-
-                if (method.equals("factor")) {
-                    BigInteger[] factors = factorizerServiceImpl.factor(bigInt);
-                    StringBuilder stringBuilder = new StringBuilder();
-
-                    for (BigInteger factor : factors) {
-                        stringBuilder.append(factor.toString());
-                        stringBuilder.append(",");
-                    }
-
-                    output.writeUTF(stringBuilder.toString());
-
-                } else if (method.equals("isPrime")) {
-                    boolean isPrime = factorizerServiceImpl.isPrime(bigInt);
-                    output.writeUTF(String.valueOf(isPrime));
-                }
-
-                serverSocket.close();
-                socket.close();
-
-            } catch (IOException e) {
-                System.out.println(e);
-            }
+    public Server() {
+        try {
+            serverSocket = new ServerSocket(10000);
+            socket = serverSocket.accept();
+        } catch (Exception e) {
+            System.out.println(e);
         }
+    }
+
+	public static void main(String[] args) {
+        Executor exec = Executors.newFixedThreadPool();
+        while (true) {
+            exec.execute(request());
+        }
+    }
+
+    public ServerRunnable request() {
+        HashMap<String, Runnable> runnables = new HashMap<>();
+        runnables.put("calculateAverage", new calculateAverageRunnable(socket));
+        runnables.put("calculateVarianceRunnable", new calculateVarianceRunnable(socket));
+        runnables.put("maxRunnable", new maxRunnable(socket));
+        runnables.put("runningTotalRunnable", new runningTotalRunnable(socket));
+        runnables.put("sortRunnable", new sortRunnable(socket));
+
+        try {
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+
+            BigInteger[] modelRow = (BigInteger[]) input.readObject();
+            BigInteger result = BigInteger.ZERO;
+
+            String method = (String) input.readObject();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return runnables.get(method);
     }
 }

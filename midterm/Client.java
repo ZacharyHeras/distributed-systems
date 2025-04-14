@@ -12,9 +12,12 @@ class Client {
 
 		while (again) {
             System.out.println("Select an option:");
-			System.out.println("0. Factorize an integer.");
-			System.out.println("1. Determine if an integer is prime.");
-			System.out.println("2. Quit.");
+			System.out.println("0. Calculate 1D array average.");
+			System.out.println("1. Calculate average of 1D array averages.");
+			System.out.println("2. Calulate overall 2D array average.");
+			System.out.println("3. Find overall largest element.");
+			System.out.println("5. Sort each 1D array.");
+			System.out.println("6. Calculate average of 1D array variances.");
 
 			int option = scanner.nextInt();
             scanner.nextLine();
