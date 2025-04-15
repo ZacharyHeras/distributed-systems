@@ -1,3 +1,4 @@
 distributed/
 __pycache__
 *.zip
+*.class

@@ -1,37 +1,37 @@
-
 import java.net.*;
 import java.math.*;
 import java.io.*;
+import java.util.concurrent.*;
 import java.util.*;
 
 class Server {
-    private static int num_threads = 12;
-    private ServerSocket serverSocket;
-    private Socket socket;
+	public static void main(String[] args) {
+        int num_threads = 12;
+        ServerSocket serverSocket = null;
+        Socket socket = null;
 
-    public Server() {
         try {
             serverSocket = new ServerSocket(10000);
             socket = serverSocket.accept();
         } catch (Exception e) {
             System.out.println(e);
         }
-    }
 
-	public static void main(String[] args) {
         Executor exec = Executors.newFixedThreadPool(num_threads);
         while (true) {
-            exec.execute(request());
+            exec.execute(request(socket));
         }
     }
 
-    public static ServerRunnable request() {
-        HashMap<String, Runnable> runnables = new HashMap<>();
-        runnables.put("calculateAverage", new calculateAverageRunnable(socket));
-        runnables.put("calculateVarianceRunnable", new calculateVarianceRunnable(socket));
-        runnables.put("maxRunnable", new maxRunnable(socket));
-        runnables.put("runningTotalRunnable", new runningTotalRunnable(socket));
-        runnables.put("sortRunnable", new sortRunnable(socket));
+    public static ServerRunnable request(Socket socket) {
+        HashMap<String, ServerRunnable> runnables = new HashMap<>();
+        runnables.put("CalculateAverage", new CalculateAverageRunnable(socket));
+        runnables.put("CalculateVarianceRunnable", new CalculateVarianceRunnable(socket));
+        runnables.put("MaxRunnable", new MaxRunnable(socket));
+        runnables.put("RunningTotalRunnable", new RunningTotalRunnable(socket));
+        runnables.put("SortRunnable", new SortRunnable(socket));
+
+        String method = null;
 
         try {
             ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
@@ -39,7 +39,7 @@ class Server {
             BigInteger[] modelRow = (BigInteger[]) input.readObject();
             BigInteger result = BigInteger.ZERO;
 
-            String method = (String) input.readObject();
+            method = (String) input.readObject();
 
         } catch (Exception e) {
             System.out.println(e);

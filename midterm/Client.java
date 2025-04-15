@@ -1,8 +1,8 @@
-
 import java.io.*;
 import java.math.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 class Client {
 	public static void main(String[] args) {
@@ -23,30 +23,23 @@ class Client {
 			int option = scanner.nextInt();
             scanner.nextLine();
 
+            // write 2d array for sending
+            // public ClientRunnable(Socket socket, BigInteger[] row, String method, Object result) {
+
+            int num_threads = 3;
+            Executor exec = Executors.newFixedThreadPool(num_threads);
+            while (true) {
+                exec.execute(new ClientRunnable());
+            }
+
 			if (option == 0) {
-                System.out.println("Enter integer: ");
-                String inputInt = scanner.nextLine();
-
-                BigInteger bigInt = new BigInteger(inputInt);
-
-				BigInteger[] factors = factorService.factor(bigInt);
-
-                for (BigInteger factor : factors) {
-                    System.out.println(factor);
-                }
-
+                exec.execute(new ClientRunnable());
 			} else if (option == 1) {
-                System.out.println("Enter integer: ");
-                String inputInt = scanner.nextLine();
-
-                BigInteger bigInt = new BigInteger(inputInt);
-
-				boolean isPrime = factorService.isPrime(bigInt);
-
-                System.out.println(isPrime);
-
+                Object[] result = new Object()[row.length]; // fix
+                for (int i = 0; i < model.length; i++) {
+                    exec.execute(new ClientRunnable(socket, model[i], "runnable_name", o));
+                }
 			} else if (option == 2) {
-				again = false;
             }
 		}
 

@@ -5,8 +5,8 @@ import java.net.*;
 import java.io.*;
 
 public abstract class ServerRunnable implements Runnable { 
-    private BigInteger[] bigIntArray;
-    private ObjectOutputStream output;
+    protected BigInteger[] bigIntArray;
+    protected ObjectOutputStream output;
     
     public ServerRunnable(Socket socket) {
 		try {
