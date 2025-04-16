@@ -33,22 +33,23 @@ class Client {
 
 		Scanner scanner = new Scanner(System.in);
 
-		boolean again = true;
-
         int option;
         String method;
 
-		while (again) {
+		while (true) {
             option = getOption(scanner);
 
             if (option == 7) {
                 for (BigInteger[] row : rows) {
                     System.out.println(Arrays.toString(row));
                 }
+                System.out.println();
+
+                continue;
             }
 
             if (option == 8) {
-                again = false;
+                break;
             }
 
             method = methods.get(option);
@@ -61,7 +62,7 @@ class Client {
                 BigInteger sum = BigInteger.ZERO;
                 int count = 0;
 
-                for (BigInteger[] row : result) {
+                for (BigInteger[] row : rows) {
                     for (BigInteger value : row) {
                         sum = sum.add(value);
                         count++;
@@ -74,10 +75,11 @@ class Client {
                 BigInteger sum = BigInteger.ZERO;
                 int count = 0;
 
-                for (BigInteger[] row : result) {
-                    for (BigInteger value : row) {
-                        sum = sum.add(value);
-                        count++;
+                for (int i = 0; i < result.length; i++) {
+                    count += rows[i].length;
+
+                    for (int j = 0; j < result[i].length; j++) {
+                        sum = sum.add(result[i][j]);
                     }
                 }
 
@@ -124,6 +126,7 @@ class Client {
 		}
 
 		scanner.close();
+        System.exit(0);
 	}
 
     public static int getOption(Scanner scanner) {
@@ -131,7 +134,7 @@ class Client {
 			System.out.println("1. 1D array average.");
 			System.out.println("2. Average of 1D array averages.");
 			System.out.println("3. Calulate overall 2D array average.");
-			System.out.println("4. Find overall largest element.");
+			System.out.println("4. Find overall largest element indicies.");
 			System.out.println("5. Sort each 1D array.");
 			System.out.println("6. Average of 1D array variances.");
 			System.out.println("7. Show Original 2D array.");
