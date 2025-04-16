@@ -2,39 +2,43 @@ import java.io.*;
 import java.math.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.*;
 
-@SuppressWarnings("unchecked")
 public class ClientRunnable implements Runnable {
-    private static final String SERVER_ADDRESS = "127.0.0.1";
-    private static final int SERVER_PORT = 10000;
-    private Socket socket;
-    private ObjectOutputStream output;
-    private ObjectInputStream input;
+    private ObjectOutputStream outputStream;
+    private ObjectInputStream inputStream;
     private BigInteger[] row;
     private String method;
-    private Object result;
+    private BigInteger[][] result;
+    private CountDownLatch latch;
+    private int index;
 
-    public ClientRunnable(Socket socket, BigInteger[] row, String method, Object result) {
+    public ClientRunnable(ObjectOutputStream outputStream,
+            ObjectInputStream inputStream,
+            BigInteger[] row,
+            String method,
+            BigInteger[][] result,
+            CountDownLatch latch,
+            int index) {
+        this.outputStream = outputStream;
+        this.inputStream = inputStream;
         this.row = row;
         this.method = method;
         this.result = result;
-        try {
-            socket.connect(new InetSocketAddress(SERVER_ADDRESS, SERVER_PORT));
-            this.output = new ObjectOutputStream(this.socket.getOutputStream());
-            this.input = new ObjectInputStream(this.socket.getInputStream());
-        } catch (Exception e) {
-            System.out.println("In FactorizerServiceProxy.java...");
-            System.out.println(e);
-        }
+        this.latch = latch;
+        this.index = index;
     }
 
     public void run() {
         try{
-            output.writeObject(row);
-            output.writeObject(method);
-            result = input.readObject();
+            outputStream.writeObject(method);
+            outputStream.writeObject(row);
+            result[index] = (BigInteger[]) inputStream.readObject();
         } catch (Exception e){
+            System.out.println("In ClientRunnable.java...");
             System.out.println(e);
         }
+
+        this.latch.countDown();
     }
 }

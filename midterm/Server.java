@@ -6,45 +6,52 @@ import java.util.*;
 
 class Server {
 	public static void main(String[] args) {
-        int num_threads = 12;
         ServerSocket serverSocket = null;
-        Socket socket = null;
-
         try {
             serverSocket = new ServerSocket(10000);
-            socket = serverSocket.accept();
         } catch (Exception e) {
+            System.out.println("In Server.java...");
             System.out.println(e);
         }
 
+        int num_threads = 3;
         Executor exec = Executors.newFixedThreadPool(num_threads);
+
         while (true) {
-            exec.execute(request(socket));
+            try {
+                Socket socket = serverSocket.accept();
+                ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+                exec.execute(request(outputStream, inputStream));
+            } catch (Exception e) {
+                System.out.println("In Server.java...");
+                System.out.println(e);
+            }
         }
     }
 
-    public static ServerRunnable request(Socket socket) {
-        HashMap<String, ServerRunnable> runnables = new HashMap<>();
-        runnables.put("CalculateAverage", new CalculateAverageRunnable(socket));
-        runnables.put("CalculateVarianceRunnable", new CalculateVarianceRunnable(socket));
-        runnables.put("MaxRunnable", new MaxRunnable(socket));
-        runnables.put("RunningTotalRunnable", new RunningTotalRunnable(socket));
-        runnables.put("SortRunnable", new SortRunnable(socket));
-
+    public static ServerRunnable request(ObjectOutputStream outputStream, ObjectInputStream inputStream) {
         String method = null;
-
         try {
-            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-
-            BigInteger[] modelRow = (BigInteger[]) input.readObject();
-            BigInteger result = BigInteger.ZERO;
-
-            method = (String) input.readObject();
-
+            method = (String) inputStream.readObject();
         } catch (Exception e) {
+            System.out.println("In Server.java...");
             System.out.println(e);
         }
 
-        return runnables.get(method);
+        switch (method) {
+            case "AverageRunnable":
+                return new AverageRunnable(outputStream, inputStream);
+            case "SumRunnable":
+                return new SumRunnable(outputStream, inputStream);
+            case "MaxRunnable":
+                return new MaxRunnable(outputStream, inputStream);
+            case "SortRunnable":
+                return new SortRunnable(outputStream, inputStream);
+            case "VarianceRunnable":
+                return new VarianceRunnable(outputStream, inputStream);
+            default:
+                return null;
+        }
     }
 }

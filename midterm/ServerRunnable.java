@@ -1,18 +1,19 @@
-
 import java.math.BigInteger;
 import java.util.*;
 import java.net.*;
 import java.io.*;
 
 public abstract class ServerRunnable implements Runnable { 
-    protected BigInteger[] bigIntArray;
-    protected ObjectOutputStream output;
+    protected BigInteger[] array;
+    protected ObjectOutputStream outputStream;
+    protected ObjectInputStream inputStream;
     
-    public ServerRunnable(Socket socket) {
+    public ServerRunnable(ObjectOutputStream outputStream, ObjectInputStream inputStream) {
+        this.outputStream = outputStream;
+        this.inputStream = inputStream;
+
 		try {
-            output = new ObjectOutputStream(socket.getOutputStream());
-			ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-            bigIntArray = (BigInteger[]) input.readObject();
+            array = (BigInteger[]) inputStream.readObject();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
