@@ -1,25 +1,32 @@
-package hello;
+package com.example.springboot;
 
 import java.net.*;
+import java.util.*;
+import com.fasterxml.jackson.annotation.*;
 
 class Machine {
-    @JsonProperty("machineID")
     private String id;
-    @JsonProperty("timestamp")
     private long timestamp;
-    @JsonProperty("resourcesHeld")
     private List<String> resourcesHeld;
-    @JsonProperty("waitingOn")
     private String waitingOn;
 
-    public Machine(String id, long timestamp, List<String> resourcesHeld, String waitingOn) {
+    public Machine(@JsonProperty("machineID") String id,
+                   @JsonProperty("timestamp") long timestamp,
+                   @JsonProperty("resourcesHeld") Object resourcesHeld,
+                   @JsonProperty("waitingOn") String waitingOn) {
         this.id = id;
         this.timestamp = timestamp;
-        this.resourcesHeld = resourcesHeld;
+
+        if (resourcesHeld instanceof String) {
+            this.resourcesHeld = new ArrayList<>();
+        } else {
+            this.resourcesHeld = (List<String>) resourcesHeld;
+        }
+
         this.waitingOn = waitingOn;
     }
 
     public String toString() {
-        return this.id + "\n" + this.timestamp + "\n" + this.resourcesHeld + "\n" + this.waitingOn;
+        return this.id + "\n" + this.timestamp + "\n" + this.resourcesHeld + "\n" + this.waitingOn + "\n";
     }
 }
