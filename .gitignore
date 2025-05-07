@@ -1,5 +1,4 @@
-distributed/
-__pycache__
 *.zip
 *.class
 *gs-spring-boot-docker/
+!*gs-spring-boot-docker/initial/src/main/java/hello/*
